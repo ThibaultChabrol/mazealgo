@@ -165833,76 +165833,144 @@ document.querySelector("#create").addEventListener('click', function () {
     let selectExo = document.getElementById("exo").value;
     let mymaze = createlab(selectValue, selectExo);
     //console.log(mymaze[mymaze.length-1])
-    resolvemaze(mymaze)
+    // resolvemaze(mymaze)
+    let position = { "posX": 0, "posY": 0 }
+    BFS(mymaze, position)
 
 });
 
 
 
 function resolvemaze(maze) {
-    
+
     console.log(maze)
-    
+
     let position = { "posX": 0, "posY": 0 }
-    
+
     let finishX = maze[maze.length - 1].posX;
-    
+
     let finishY = maze[maze.length - 1].posY;
 
-   
-    
-    // maze.find(square => square.posX === position.posX && square.posY === position.posY).visited = false ;
-    
-    while (!(position.posX === finishX && position.posY === finishY)) {
-        
-        console.log(position)
-       
-        
-        let actualsquare = maze.find(square => square.posX === position.posX && square.posY === position.posY);
-        
-        if( actualsquare.walls.filter(mur => mur ===true).length === 1 && actualsquare.intersection === undefined){
-            maze.find(square => square.posX === position.posX && square.posY === position.posY).intersection = true;
-            }
-        console.log(actualsquare);
-       
 
-        if (actualsquare.walls[0] === false && maze.find(nextsquare => nextsquare.posY===actualsquare.posY - 1 && nextsquare.posX ===actualsquare.posX).visited === undefined) {
+
+    // maze.find(square => square.posX === position.posX && square.posY === position.posY).visited = false ;
+
+    while (!(position.posX === finishX && position.posY === finishY)) {
+
+        console.log(position)
+
+
+        let actualsquare = maze.find(square => square.posX === position.posX && square.posY === position.posY);
+
+        if (actualsquare.walls.filter(mur => mur === true).length === 1 && actualsquare.intersection === undefined) {
+            maze.find(square => square.posX === position.posX && square.posY === position.posY).intersection = true;
+        }
+        console.log(actualsquare);
+
+
+        if (actualsquare.walls[0] === false && maze.find(nextsquare => nextsquare.posY === actualsquare.posY - 1 && nextsquare.posX === actualsquare.posX).visited === undefined) {
             maze.find(square => square.posX === position.posX && square.posY === position.posY).visited = true;
             position.posY = position.posY - 1
-            }
+        }
         else if (actualsquare.walls[1] === false && maze.find(nextsquare => nextsquare.posX === actualsquare.posX + 1 && nextsquare.posY === actualsquare.posY).visited === undefined) {
             maze.find(square => square.posX === position.posX && square.posY === position.posY).visited = true;
             position.posX = position.posX + 1
-            }
-        else if (actualsquare.walls[2] === false && maze.find(nextsquare => nextsquare.posY === actualsquare.posY+ 1 && nextsquare.posX === actualsquare.posX).visited === undefined) {
+        }
+        else if (actualsquare.walls[2] === false && maze.find(nextsquare => nextsquare.posY === actualsquare.posY + 1 && nextsquare.posX === actualsquare.posX).visited === undefined) {
             maze.find(square => square.posX === position.posX && square.posY === position.posY).visited = true;
             position.posY = position.posY + 1
-            }
-        else if (actualsquare.walls[3] === false && maze.find(nextsquare => nextsquare.posX === actualsquare.posX- 1  && nextsquare.posY ===actualsquare.posY).visited === undefined) {
+        }
+        else if (actualsquare.walls[3] === false && maze.find(nextsquare => nextsquare.posX === actualsquare.posX - 1 && nextsquare.posY === actualsquare.posY).visited === undefined) {
             maze.find(square => square.posX === position.posX && square.posY === position.posY).visited = true;
             position.posX = position.posX - 1
-           }
-        else{
+        }
+        else {
             maze.find(square => square.posX === position.posX && square.posY === position.posY).visited = true;
-            position.posY =maze.find(inter => inter.intersection === true).posY;
+            position.posY = maze.find(inter => inter.intersection === true).posY;
             position.posX = maze.find(inter => inter.intersection === true).posX;
             maze.find(inter => inter.intersection === true).intersection = false
         }
-    
-           
-    
-           
-        } 
+
+
+
+
+    }
     console.log("you won")
 }
-
-
-function DFS(g,e){
-    let S=[] ;
-    S.push(e)
-    e.visited = true
-
-    while (S.length != 0){
-        let v = 0
+function neighbours(tableau, X, Y) {
+    let position = { "posX": X, "posY": Y }
+    let actualsquare = tableau.find(square => square.posX === position.posX && square.posY === position.posY);
+    let voisin = []
+    if (actualsquare.walls[0] === false) {
+        tableau.find(square => square.posX === position.posX && square.posY === position.posY).visited = true;
+        voisin.push(tableau.find(nextsquare => nextsquare.posY === actualsquare.posY - 1 && nextsquare.posX === actualsquare.posX))
     }
+    if (actualsquare.walls[1] === false) {
+        tableau.find(square => square.posX === position.posX && square.posY === position.posY).visited = true
+        voisin.push(tableau.find(nextsquare => nextsquare.posX === actualsquare.posX + 1 && nextsquare.posY === actualsquare.posY))
+    }
+    if (actualsquare.walls[2] === false) {
+        tableau.find(square => square.posX === position.posX && square.posY === position.posY).visited = true;
+        voisin.push(tableau.find(nextsquare => nextsquare.posX === actualsquare.posX && nextsquare.posY === actualsquare.posY + 1))
+    }
+    if (actualsquare.walls[3] === false) {
+        tableau.find(square => square.posX === position.posX && square.posY === position.posY).visited = true;
+        voisin.push(tableau.find(nextsquare => nextsquare.posX === actualsquare.posX - 1 && nextsquare.posY === actualsquare.posY))
+    }
+    return voisin
+}
+
+function DFS(tab, start) {
+    tab.path = [];
+    let finish = tab[tab.length - 1]
+
+
+    let S = [];
+    S.push(start)
+    start.visited = true
+
+    while (S.length != 0) {
+
+        let v = S.pop();
+        tab.path.push(v);
+        var elem = document.getElementById(v.posX + "." + v.posY);
+        elem.style.backgroundColor = "green"
+        let a = neighbours(tab, v.posX, v.posY)
+        for (let voisin of a) {
+            if (voisin.visited === undefined)
+                S.push(voisin)
+        }
+        console.log(v);
+        if (v === finish) {
+            console.log("you won")
+            return tab.path;
+        }
+    }
+
+
+}
+
+function BFS(tab, start) {
+    let finish = tab[tab.length - 1]
+    let q = []
+    tab.path = [];
+    q.push(start)
+
+    while (q.length != 0) {
+        let n = q.pop();
+        tab.path.push(n);
+        n.visited = true;
+        var elem = document.getElementById(n.posX + "." + n.posY);
+        elem.style.backgroundColor = "green"
+        if (n === finish) {
+            console.log(n)
+            return tab.path
+        }
+        for (let w of neighbours(tab, n.posX, n.posY)) {
+            if (w.visited === undefined) {
+                q.push(w)
+            }
+        }
+    }
+
 }
