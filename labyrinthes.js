@@ -165840,6 +165840,7 @@ document.querySelector("#create").addEventListener('click', function () {
     let selectValue = document.getElementById("case").value;
     let selectExo = document.getElementById("exo").value;
     let mymaze = createlab(selectValue, selectExo);
+
     resolvemaze(mymaze)
 });
 
@@ -165852,6 +165853,7 @@ document.querySelector("#BFS").addEventListener('click', function () {
     let position = { "posX": 0, "posY": 0 }
     BFS(mymaze, position)
 });
+
 
 // bouton pour DFS
 document.querySelector("#DFS").addEventListener('click', function () {
@@ -165921,6 +165923,28 @@ async function resolvemaze(maze) {
     }
     await display(position)
     console.log("you won")
+}
+function neighbours(tableau, X, Y) {
+    let position = { "posX": X, "posY": Y }
+    let actualsquare = tableau.find(square => square.posX === position.posX && square.posY === position.posY);
+    let voisin = []
+    if (actualsquare.walls[0] === false) {
+        tableau.find(square => square.posX === position.posX && square.posY === position.posY).visited = true;
+        voisin.push(tableau.find(nextsquare => nextsquare.posY === actualsquare.posY - 1 && nextsquare.posX === actualsquare.posX))
+    }
+    if (actualsquare.walls[1] === false) {
+        tableau.find(square => square.posX === position.posX && square.posY === position.posY).visited = true
+        voisin.push(tableau.find(nextsquare => nextsquare.posX === actualsquare.posX + 1 && nextsquare.posY === actualsquare.posY))
+    }
+    if (actualsquare.walls[2] === false) {
+        tableau.find(square => square.posX === position.posX && square.posY === position.posY).visited = true;
+        voisin.push(tableau.find(nextsquare => nextsquare.posX === actualsquare.posX && nextsquare.posY === actualsquare.posY + 1))
+    }
+    if (actualsquare.walls[3] === false) {
+        tableau.find(square => square.posX === position.posX && square.posY === position.posY).visited = true;
+        voisin.push(tableau.find(nextsquare => nextsquare.posX === actualsquare.posX - 1 && nextsquare.posY === actualsquare.posY))
+    }
+    return voisin
 }
 
 // DISPLAY CHEMIN 
