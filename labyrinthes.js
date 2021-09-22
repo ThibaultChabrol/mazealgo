@@ -165786,6 +165786,13 @@ const lab = {
 }
 
 
+
+
+
+
+
+
+//fonction pour créer le labyrinthes 
 function createlab(i, j) {
 
     elementHtml = document.createElement("div");
@@ -165817,31 +165824,47 @@ function createlab(i, j) {
     });
 
     const start = document.getElementById("0.0");
-    start.style.color = "red";
+    start.style.backgroundcolor = "red";
 
     const size = i - 1;
     const arrival = document.getElementById(size + "." + size);
 
-    arrival.style.color = "red";
+    arrival.style.backgroundcolorcolor = "red";
 
     return mylab
 }
 
+// bouton pour algo maison
 document.querySelector("#create").addEventListener('click', function () {
 
     let selectValue = document.getElementById("case").value;
     let selectExo = document.getElementById("exo").value;
     let mymaze = createlab(selectValue, selectExo);
-    //console.log(mymaze[mymaze.length-1])
-    // resolvemaze(mymaze)
+    resolvemaze(mymaze)
+});
+
+// bouton pour BFS
+document.querySelector("#BFS").addEventListener('click', function () {
+
+    let selectValue = document.getElementById("case").value;
+    let selectExo = document.getElementById("exo").value;
+    let mymaze = createlab(selectValue, selectExo);
+    let position = { "posX": 0, "posY": 0 }
+    BFS(mymaze, position)
+});
+
+// bouton pour DFS
+document.querySelector("#DFS").addEventListener('click', function () {
+    let selectValue = document.getElementById("case").value;
+    let selectExo = document.getElementById("exo").value;
+    let mymaze = createlab(selectValue, selectExo);
     let position = { "posX": 0, "posY": 0 }
     DFS(mymaze, position)
-
 });
 
 
-
-function resolvemaze(maze) {
+//algo de résolution maison
+async function resolvemaze(maze) {
 
     console.log(maze)
 
@@ -165856,8 +165879,9 @@ function resolvemaze(maze) {
     // maze.find(square => square.posX === position.posX && square.posY === position.posY).visited = false ;
 
     while (!(position.posX === finishX && position.posY === finishY)) {
+        await delay(25)
+        await display(position)
 
-        console.log(position)
 
 
         let actualsquare = maze.find(square => square.posX === position.posX && square.posY === position.posY);
@@ -165895,13 +165919,30 @@ function resolvemaze(maze) {
 
 
     }
+    await display(position)
     console.log("you won")
 }
+
+// DISPLAY CHEMIN 
+
+async function display(f) {
+    var elem = document.getElementById(f.posX + "." + f.posY);
+    elem.style.backgroundColor = "green"
+}
+async function delay(delayInms) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve(2);
+        }, delayInms);
+    });
+}
+
+// fonction pour récupérer les voisins 
 function neighbours(tableau, X, Y) {
     let position = { "posX": X, "posY": Y }
     let actualsquare = tableau.find(square => square.posX === position.posX && square.posY === position.posY);
     let voisin = []
-    if (actualsquare.walls[0] === false)  {
+    if (actualsquare.walls[0] === false) {
         tableau.find(square => square.posX === position.posX && square.posY === position.posY).visited = true;
         voisin.push(tableau.find(nextsquare => nextsquare.posY === actualsquare.posY - 1 && nextsquare.posX === actualsquare.posX))
     }
@@ -165920,31 +165961,58 @@ function neighbours(tableau, X, Y) {
     return voisin
 }
 
-function DFS(tab, start) {
-    tab.path = [];
+// Fonction de résolution BFS
+async function BFS(tab, start) {
     let finish = tab[tab.length - 1]
+    let q = []
+    tab.path = [];
+    q.push(start)
 
-    
-    let S = [];
-    S.push(start)
-    start.visited = true
+    while (q.length != 0) {
+        let n = q.shift();
+        tab.path.push(n);
+        n.visited = true;
 
-    while (S.length != 0) {
+        await delay(30)
+        await display(n)
 
-        let v = S.pop();
-        tab.path.push(v);
-        
-        let a = neighbours(tab, v.posX, v.posY)
-        for (let voisin of a) {
-            if (voisin.visited === undefined)
-                S.push(voisin)
+        if (n === finish) {
+            console.log(n)
+            return tab.path
         }
-        console.log(v);
-        if(v === finish ){
-            console.log("you won")
-            return tab.path;
+        for (let w of neighbours(tab, n.posX, n.posY)) {
+            if (w.visited === undefined) {
+                q.push(w)
+            }
         }
     }
 
-    
+}
+
+// Fonction de résolution DFS
+async function DFS(tab, start) {
+    let finish = tab[tab.length - 1]
+    let q = []
+    tab.path = [];
+    q.push(start)
+
+    while (q.length != 0) {
+        let n = q.pop();
+        tab.path.push(n);
+        n.visited = true;
+
+        await delay(30)
+        await display(n)
+
+        if (n === finish) {
+            console.log(n)
+            return tab.path
+        }
+        for (let w of neighbours(tab, n.posX, n.posY)) {
+            if (w.visited === undefined) {
+                q.push(w)
+            }
+        }
+    }
+
 }
